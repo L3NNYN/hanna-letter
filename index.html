@@ -31,16 +31,7 @@
     30%  { transform: scale(1.08); }
     100% { transform: scale(1); }
   }
-  @keyframes dragonFly {
-    0%   { transform: translate(-40vw, 6vh) rotate(0deg); opacity: 0; }
-    12%  { opacity: 1; }
-    56%  { transform: translate(46vw, -3vh) rotate(-2deg); }
-    100% { transform: translate(130vw, -20vh) rotate(-6deg); opacity: 1; }
-  }
-  @keyframes pigCarried {
-    0%   { opacity: 0; transform: translate(18px, 16px) scale(0.85); }
-    100% { opacity: 1; transform: translate(18px, 20px) scale(0.85); }
-  }
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -48,7 +39,7 @@
 </style>
 </helmet>
 
-<div style="position:relative; min-height:100vh; width:100%; overflow:hidden; background-color:{{ bgColor }}; transition:background-color 2.4s ease; color:#e7c879; font-family:'Times New Roman', Times, Georgia, serif; display:flex; align-items:center; justify-content:center;">
+<div style="position:relative; min-height:100vh; width:100%; overflow:hidden; background-color:#0a0807; color:#e7c879; font-family:'Times New Roman', Times, Georgia, serif; display:flex; align-items:center; justify-content:center;">
 
   <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none;">
     <div style="position:absolute; top:8%; left:18%; width:2px; height:2px; border-radius:50%; background:#f0d68a; box-shadow:0 0 6px 1px rgba(231,200,121,.7); animation:twinkle 5s ease-in-out infinite;"></div>
@@ -63,28 +54,15 @@
     <div aria-hidden="true" style="position:absolute; left:{{ p.left }}; top:{{ p.top }}; font-size:{{ p.size }}; opacity:0; --drift:{{ p.drift }}; animation:floatUp {{ p.duration }} ease-in-out infinite; animation-delay:{{ p.delay }}; filter:blur(0.3px); color:#f0d68a; text-shadow:0 0 8px rgba(231,200,121,.6); pointer-events:none;">✦</div>
   </sc-for>
 
-  <sc-if value="{{ !ended }}" hint-placeholder-val="{{ true }}">
-    <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+  <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center;">
 
-      <sc-for list="{{ oinks }}" as="oink" hint-placeholder-count="0">
-        <div style="position:absolute; top:0; left:50%; transform:translate(-50%,0); color:#f2d898; font-size:20px; font-style:italic; white-space:nowrap; opacity:0; animation:oinkFloat 1.6s ease-out forwards; text-shadow:0 0 12px rgba(231,200,121,.4); pointer-events:none;">oink</div>
-      </sc-for>
+    <sc-for list="{{ oinks }}" as="oink" hint-placeholder-count="0">
+      <div style="position:absolute; top:0; left:50%; transform:translate(-50%,0); color:#f2d898; font-size:20px; font-style:italic; white-space:nowrap; opacity:0; animation:oinkFloat 1.6s ease-out forwards; text-shadow:0 0 12px rgba(231,200,121,.4); pointer-events:none;">oink</div>
+    </sc-for>
 
-      <sc-if value="{{ !pigGone }}" hint-placeholder-val="{{ true }}">
-        <button key="{{ bounceKey }}" onClick="{{ onPigClick }}" style="background:none; border:none; cursor:pointer; padding:0; font-size:clamp(40px, 11vw, 68px); line-height:1; filter:drop-shadow(0 0 22px rgba(231,200,121,.28)); animation:pigBounce 0.35s ease-out; transform-origin:50% 60%;">🐷</button>
-      </sc-if>
+    <button key="{{ bounceKey }}" onClick="{{ onPigClick }}" style="background:none; border:none; cursor:pointer; padding:0; font-size:clamp(40px, 11vw, 68px); line-height:1; filter:drop-shadow(0 0 22px rgba(231,200,121,.28)); animation:pigBounce 0.35s ease-out; transform-origin:50% 60%;">🐷</button>
 
-      <sc-if value="{{ dragonFlying }}" hint-placeholder-val="{{ false }}">
-        <div aria-hidden="true" style="position:fixed; top:30%; left:0; z-index:5; font-size:clamp(46px, 12vw, 80px); animation:dragonFly 6s ease-in-out forwards; pointer-events:none;">
-          🐉
-          <sc-if value="{{ pigGone }}" hint-placeholder-val="{{ false }}">
-            <span style="position:absolute; top:0; left:0; font-size:0.4em; display:inline-block; animation:pigCarried 1.3s ease-out forwards;">🐷</span>
-          </sc-if>
-        </div>
-      </sc-if>
-
-    </div>
-  </sc-if>
+  </div>
 
   <div aria-hidden="true" style="position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 90% at 50% 20%, transparent 0%, transparent 50%, rgba(0,0,0,.5) 100%);"></div>
 
@@ -93,12 +71,8 @@
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:700}}">
 class Component extends DCLogic {
   state = {
-    clicks: 0,
     oinks: [],
     bounceKey: 0,
-    dragonFlying: false,
-    pigGone: false,
-    ended: false,
   };
 
   renderVals() {
@@ -106,17 +80,11 @@ class Component extends DCLogic {
       particles: PARTICLES,
       oinks: this.state.oinks,
       bounceKey: this.state.bounceKey,
-      dragonFlying: this.state.dragonFlying,
-      pigGone: this.state.pigGone,
-      ended: this.state.ended,
-      bgColor: this.state.ended ? '#1a0808' : '#0a0807',
       onPigClick: () => this._handleClick(),
     };
   }
 
   _handleClick() {
-    if (this.state.ended || this.state.dragonFlying) return;
-
     const id = Date.now() + Math.random();
     const oinks = [...this.state.oinks, { id }];
     this.setState({ oinks, bounceKey: this.state.bounceKey + 1 });
@@ -124,17 +92,6 @@ class Component extends DCLogic {
       const remaining = this.state.oinks.filter((o) => o.id !== id);
       this.setState({ oinks: remaining });
     }, 1600);
-
-    const clicks = this.state.clicks + 1;
-    this.setState({ clicks });
-
-    if (clicks >= 5) {
-      this.setState({ dragonFlying: true });
-      setTimeout(() => this.setState({ pigGone: true }), 3360); // matches the ~56% grab point of the 6s flight, when the dragon is near screen center
-      setTimeout(() => {
-        this.setState({ ended: true, dragonFlying: false });
-      }, 6200);
-    }
   }
 
   componentDidMount() {
@@ -143,8 +100,6 @@ class Component extends DCLogic {
       body: 'Viendo al chancho 🐷',
     }).catch(function () {});
   }
-
-  componentWillUnmount() {}
 }
 
 const PARTICLES = Array.from({ length: 14 }).map((_, i) => {
